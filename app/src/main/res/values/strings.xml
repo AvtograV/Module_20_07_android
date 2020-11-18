@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Silicon Bee</string>
+    <string name="label">SiBee</string>
+    <string name="On">Включено</string>
+    <string name="Off">Выключено</string>
+    <string name="temp_begin">temperature 0.0 °</string>
+    <string name="off">off</string>
+    <string name="on">on</string>
+    <string name="co2_0_ppm">Содержание CO2 – 0 ppm</string>
+</resources>
