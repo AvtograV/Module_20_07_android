@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     ThreadConnectBTdevice myThreadConnectBTdevice;
     ThreadConnected myThreadConnected;
     private UUID myUUID;
-    private StringBuilder sb = new StringBuilder();
+    private final StringBuilder sb = new StringBuilder();
 
 
     @Override
@@ -151,6 +151,12 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 finish();
             }
         }
+    }
+
+    // click on button
+    public void goGroundFloor(View view) {
+        Intent intent = new Intent(MainActivity.this, GroundFloor.class);
+        startActivity(intent);
     }
 
     // Поток для коннекта с Bluetooth
@@ -280,10 +286,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                                 textTemp.setText(sbprint + "\u00B0");
                             } else if (sbprint.contains("MQ135")) {
                                 textMQ135.setText(sbprint);
-                            } else if (sbprint.contains("D12 ON")) {
-                                //   Toast.makeText(MainActivity.this, sbprint, Toast.LENGTH_SHORT).show();
-                            } else if (sbprint.contains("D12 OFF")) {
-                                //   Toast.makeText(MainActivity.this, sbprint, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -315,13 +317,13 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                         byte[] bytesToSend = "OPEN\r\n".getBytes();
                         myThreadConnected.write(bytesToSend);
                     }
-                    //                   Toast.makeText(MainActivity.this, "D10 ON", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "KEY OPEN", Toast.LENGTH_SHORT).show();
                 } else {
                     if (myThreadConnected != null) {
                         byte[] bytesToSend = "CLOSE\r\n".getBytes();
                         myThreadConnected.write(bytesToSend);
                     }
-                    //                   Toast.makeText(MainActivity.this, "D10 OFF", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "KEY CLOSE", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.toggle_button_2:

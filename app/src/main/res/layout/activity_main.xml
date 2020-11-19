@@ -7,13 +7,14 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="15dp"
         android:fontFamily="cursive"
         android:text="@string/label"
-        android:textColor="@color/red"
+        android:textColor="@color/bright_red"
         android:textSize="23sp"
         android:textStyle="italic"
         app:layout_constraintRight_toRightOf="parent"
@@ -49,7 +50,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:visibility="gone"
-        app:constraint_referenced_ids="toggle_button_1,toggle_button_2,toggle_button_3, toggle_button_4, textTemperature, textMQ_135" />
+        app:constraint_referenced_ids="button_1, button_2, button_3,toggle_button_1,toggle_button_2,toggle_button_3, toggle_button_4, textTemperature, textMQ_135" />
 
     <ToggleButton
         android:id="@+id/toggle_button_1"
@@ -59,8 +60,8 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="200dp"
         android:minWidth="120dp"
-        android:textOff="@string/off"
-        android:textOn="@string/on"
+        android:textOff="@string/close"
+        android:textOn="@string/open"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/pair_id_list" />
 
@@ -102,6 +103,48 @@
         android:textOn="@string/on"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toggle_button_3" />
+
+    <Button
+        android:id="@+id/button_3"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="1dp"
+        android:onClick="goGroundFloor"
+        android:text="@string/second_flood"
+        android:textColor="@color/red"
+        app:layout_constraintBottom_toTopOf="@+id/button_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="OnClick" />
+
+    <Button
+        android:id="@+id/button_2"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="1dp"
+        android:onClick="goGroundFloor"
+        android:text="@string/first_flood"
+        android:textColor="@color/red"
+        app:layout_constraintBottom_toTopOf="@+id/button_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="OnClick" />
+
+    <Button
+        android:id="@+id/button_1"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="16dp"
+        android:onClick="goGroundFloor"
+        android:text="@string/ground_flood"
+        android:textColor="@color/red"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="OnClick" />
 
     <TextView
         android:id="@+id/textTemperature"
