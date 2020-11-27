@@ -2,7 +2,9 @@
   <dictionary name="Пользователь">
     <words>
       <w>avtograv</w>
+      <w>imei</w>
       <w>sibee</w>
+      <w>tdevice</w>
     </words>
   </dictionary>
 </component>

@@ -11,6 +11,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -31,8 +32,8 @@ import static android.R.layout.simple_list_item_1;
 public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
     ToggleButton tb1, tb2, tb3, tb4;
-    TextView textTemp, textMQ135;
-    Group groupToggleButton;
+    private TextView textTemp, textMQ135;
+    private Group groupToggleButton;
     private static final int REQUEST_ENABLE_BT = 1;
     public TextView textInfo;
     BluetoothAdapter bluetoothAdapter;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     ThreadConnected myThreadConnected;
     private UUID myUUID;
     private final StringBuilder sb = new StringBuilder();
+    private String sbPrint;
+    private boolean go_or_not = false;
 
 
     @Override
@@ -82,7 +85,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             finish();
             return;
         }
-        @SuppressLint("HardwareIds") String stInfo = bluetoothAdapter.getName() + " : " + bluetoothAdapter.getAddress();
+
+        @SuppressLint("HardwareIds")
+        String stInfo = bluetoothAdapter.getName() + " : " + bluetoothAdapter.getAddress();
         textInfo.setText(String.format("Имя и IMEI вашего устройства:\n%s", stInfo));
     }
 
@@ -157,7 +162,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     public void goGroundFloor(View view) {
         Intent intent = new Intent(MainActivity.this, GroundFloor.class);
         startActivity(intent);
+        go_or_not = true;
     }
+
 
     // Поток для коннекта с Bluetooth
     private class ThreadConnectBTdevice extends Thread {
@@ -237,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         // InputStream - абстрактный класс, описывающий поток ввода
         private final InputStream connectedInputStream;
         private final OutputStream connectedOutputStream;
-        private String sbprint;
+
 
         public ThreadConnected(BluetoothSocket socket) {
             InputStream in = null;
@@ -252,9 +259,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             connectedOutputStream = out;
         }
 
-
+        // Приём данных
         @SuppressLint("SetTextI18n")
-        @Override                           // Приём данных
+        @Override
         public void run() {
             while (true) {
                 try {
@@ -264,28 +271,31 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                     // возвращая количество прочитанных байтов.
                     // По достижении конца файла возвращает значение -1
                     int bytes = connectedInputStream.read(buffer);
-
                     // задаём диапазон символьного массива
-                    // Указываем сам массив байтов, начало диапазона и
+                    // указываем сам массив байтов, начало диапазона и
                     // количество символов для записи в строку.
-                    String strIncom = new String(buffer, 0, bytes);
+                    String strInCom = new String(buffer, 0, bytes);
 
                     // собираем символы в строку
-                    sb.append(strIncom);
-
+                    sb.append(strInCom);
                     // определяем конец строки
                     int endOfLineIndex = sb.indexOf("\r\n");
 
                     if (endOfLineIndex > 0) {
-                        sbprint = sb.substring(0, endOfLineIndex);
+                        sbPrint = sb.substring(0, endOfLineIndex);
                         sb.delete(0, sb.length());
 
                         // Вывод данных
                         runOnUiThread(() -> {
-                            if (sbprint.contains("temp")) {
-                                textTemp.setText(sbprint + "\u00B0");
-                            } else if (sbprint.contains("MQ135")) {
-                                textMQ135.setText(sbprint);
+                            if (sbPrint.contains("temp")) {
+                                textTemp.setText(sbPrint + "\u00B0");
+                                if (go_or_not) {
+                                    Intent intent = new Intent(MainActivity.this, GroundFloor.class);
+                                    intent.putExtra("temp_go", sbPrint + "\u00B0");
+                                    startActivity(intent);
+                                }
+                            } else if (sbPrint.contains("MQ135")) {
+                                textMQ135.setText(sbPrint);
                             }
                         });
                     }
@@ -302,7 +312,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 e.printStackTrace();
             }
         }
-
     }
 
 

@@ -50,7 +50,9 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:visibility="gone"
-        app:constraint_referenced_ids="button_1, button_2, button_3,toggle_button_1,toggle_button_2,toggle_button_3, toggle_button_4, textTemperature, textMQ_135" />
+        app:constraint_referenced_ids="button_1, button_2, button_3,
+        toggle_button_1,toggle_button_2,toggle_button_3, toggle_button_4,
+        textTemperature, textMQ_135"/>
 
     <ToggleButton
         android:id="@+id/toggle_button_1"
