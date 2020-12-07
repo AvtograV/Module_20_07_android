@@ -12,4 +12,9 @@
     <string name="ground_flood">ground flood</string>
     <string name="first_flood">first flood</string>
     <string name="second_flood">second flood</string>
+    <string name="button">Button</string>
+    <string name="forced_ventilation_off">приточн. откл</string>
+    <string name="forced_ventilation_on">приточн. вкл</string>
+    <string name="exhaust_ventilation_off">вытяжн. откл</string>
+    <string name="exhaust_ventilation_on">вытяжн. вкл</string>
 </resources>

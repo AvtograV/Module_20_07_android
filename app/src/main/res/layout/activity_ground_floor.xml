@@ -22,10 +22,10 @@
     <FrameLayout
         android:id="@+id/TODO"
         android:name="com.avtograv.sibee.fragments.FragmentGetTemp"
-        android:layout_width="wrap_content"
-        android:layout_height="135dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="248dp"
+        android:layout_width="275dp"
+        android:layout_height="589dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

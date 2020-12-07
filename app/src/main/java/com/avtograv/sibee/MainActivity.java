@@ -1,8 +1,5 @@
 package com.avtograv.sibee;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.Group;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -10,8 +7,8 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -19,6 +16,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.Group;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,11 +31,13 @@ import static android.R.layout.simple_list_item_1;
 
 public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
-    ToggleButton tb1, tb2, tb3, tb4;
-    private TextView textTemp, textMQ135;
     private Group groupToggleButton;
+    ToggleButton tb1, tb2, tb3, tb4;
+    private TextView textTempRight,
+            textTempLeft,
+            textMQ135;
     private static final int REQUEST_ENABLE_BT = 1;
-    public TextView textInfo;
+    public TextView textInfo, textInfoLand;
     BluetoothAdapter bluetoothAdapter;
     ArrayList<String> pairedDeviceArrayList;
     ListView listViewPairedDevice;
@@ -45,15 +47,18 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     private UUID myUUID;
     private final StringBuilder sb = new StringBuilder();
     private String sbPrint;
-    private boolean go_or_not = false;
 
+    private boolean go_or_not,
+            orientation_land = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textTemp = findViewById(R.id.textTemperature);
+        textTempRight = findViewById(R.id.textTempRight);
+        textTempLeft = findViewById(R.id.textTempLeft);
+
         textMQ135 = findViewById(R.id.textMQ_135);
 
         tb1 = findViewById(R.id.toggle_button_1);
@@ -67,9 +72,11 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         tb4.setOnCheckedChangeListener(this);
 
         final String UUID_STRING_WELL_KNOWN_SPP = "00001101-0000-1000-8000-00805F9B34FB";
-        textInfo = findViewById(R.id.textInfo);
-        listViewPairedDevice = findViewById(R.id.pair_id_list);
 
+        textInfo = findViewById(R.id.textInfo);
+        textInfoLand = findViewById(R.id.textInfoLand);
+
+        listViewPairedDevice = findViewById(R.id.pair_id_list);
         groupToggleButton = findViewById(R.id.group_toggle_button);
 
 
@@ -88,7 +95,11 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
         @SuppressLint("HardwareIds")
         String stInfo = bluetoothAdapter.getName() + " : " + bluetoothAdapter.getAddress();
-        textInfo.setText(String.format("Имя и IMEI вашего устройства:\n%s", stInfo));
+
+        if (!getScreenOrientation())
+            textInfo.setText(String.format("Имя и IMEI вашего устройства:\n%s", stInfo));
+        else if (getScreenOrientation())
+            textInfoLand.setText(String.format("Имя и IMEI вашего устройства:\n%s", stInfo));
     }
 
     // Запрос на включение Bluetooth
@@ -204,18 +215,23 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             if (success) {
                 runOnUiThread(() -> {
 
+                    // скрыть имя и IMEI устройства
+                    if (!getScreenOrientation())
+                        textInfo.setVisibility(View.GONE);
+                    else if (getScreenOrientation())
+                        textInfoLand.setVisibility(View.GONE);
+
                     // открываем панель с кнопками
                     groupToggleButton.setVisibility(View.VISIBLE);
-                    textTemp.setText("Измерение" + "\n" + "температуры");
+
+                    textTempRight.setText("Измерение" + "\n" + "температуры");
+                    textTempLeft.setText("Измерение" + "\n" + "температуры");
                     textMQ135.setText("Измерение" + "\n" + "содержания СO2");
 
                     if (myThreadConnected != null) {
-                        if (textTemp.getText() == "Измерение" + "\n" + "температуры"
-                                || textMQ135.getText() == "Измерение" + "\n" + "содержания СO2") {
-                            // отправить запрос на измерение температуры
-                            byte[] bytesToSend = "REQUEST\r\n".getBytes();
-                            myThreadConnected.write(bytesToSend);
-                        }
+                        // отправить запрос на измерение температуры
+                        byte[] bytesToSend = "REQUEST\r\n".getBytes();
+                        myThreadConnected.write(bytesToSend);
                     }
                 });
 
@@ -287,15 +303,21 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
                         // Вывод данных
                         runOnUiThread(() -> {
-                            if (sbPrint.contains("temp")) {
-                                textTemp.setText(sbPrint + "\u00B0");
+                            if (sbPrint.contains("temp right ")) {
+                                textTempRight.setText(sbPrint + "\u00B0");
+
                                 if (go_or_not) {
                                     Intent intent = new Intent(MainActivity.this, GroundFloor.class);
                                     intent.putExtra("temp_go", sbPrint + "\u00B0");
                                     startActivity(intent);
                                 }
+                            } else if (sbPrint.contains("temp left ")) {
+                                textTempLeft.setText(sbPrint + "\u00B0");
                             } else if (sbPrint.contains("MQ135")) {
                                 textMQ135.setText(sbPrint);
+                            } else if (sbPrint.contains("FORCED_ON")) {
+                                tb1.setText("приточн. вкл");
+                                tb1.setChecked(true);
                             }
                         });
                     }
@@ -312,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 e.printStackTrace();
             }
         }
+
     }
 
 
@@ -323,35 +346,41 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             case R.id.toggle_button_1:
                 if (isChecked) {
                     if (myThreadConnected != null) {
-                        byte[] bytesToSend = "OPEN\r\n".getBytes();
+                        byte[] bytesToSend = "FORCED_VENT_ON\r\n".getBytes();
                         myThreadConnected.write(bytesToSend);
                     }
-                    Toast.makeText(MainActivity.this, "KEY OPEN", Toast.LENGTH_SHORT).show();
                 } else {
                     if (myThreadConnected != null) {
-                        byte[] bytesToSend = "CLOSE\r\n".getBytes();
+                        byte[] bytesToSend = "FORCED_VENT_OFF\r\n".getBytes();
                         myThreadConnected.write(bytesToSend);
                     }
-                    Toast.makeText(MainActivity.this, "KEY CLOSE", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.toggle_button_2:
                 if (isChecked) {
                     if (myThreadConnected != null) {
-                        byte[] bytesToSend = "b".getBytes();
+                        byte[] bytesToSend = "EXHAUST_VENT_ON\r\n".getBytes();
                         myThreadConnected.write(bytesToSend);
                     }
-
-//                    Toast.makeText(MainActivity.this, "D11 ON", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "ВЫТЯЖКА ВКЛ", Toast.LENGTH_SHORT).show();
                 } else {
                     if (myThreadConnected != null) {
-
-                        byte[] bytesToSend = "B".getBytes();
+                        byte[] bytesToSend = "EXHAUST_VENT_OFF\r\n".getBytes();
                         myThreadConnected.write(bytesToSend);
                     }
-//                    Toast.makeText(MainActivity.this, "D11 OFF", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "ВЫТЯЖКА ОТКЛ", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
+    }
+
+    // orientation
+    private boolean getScreenOrientation() {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+            orientation_land = false;
+        else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            orientation_land = true;
+
+        return orientation_land;
     }
 }
