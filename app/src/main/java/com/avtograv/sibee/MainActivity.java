@@ -29,7 +29,8 @@ import java.util.UUID;
 
 import static android.R.layout.simple_list_item_1;
 
-public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
+public class MainActivity extends AppCompatActivity
+        implements CompoundButton.OnCheckedChangeListener {
 
     private Group groupToggleButton;
     ToggleButton tb1, tb2, tb3, tb4;
@@ -85,21 +86,14 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             finish();
             return;
         }
+
         myUUID = UUID.fromString(UUID_STRING_WELL_KNOWN_SPP);
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
         if (bluetoothAdapter == null) {
             Toast.makeText(this, "Bluetooth is not supported on this hardware platform", Toast.LENGTH_LONG).show();
             finish();
-            return;
         }
-
-        @SuppressLint("HardwareIds")
-        String stInfo = bluetoothAdapter.getName() + " : " + bluetoothAdapter.getAddress();
-
-        if (!getScreenOrientation())
-            textInfo.setText(String.format("Имя и IMEI вашего устройства:\n%s", stInfo));
-        else if (getScreenOrientation())
-            textInfoLand.setText(String.format("Имя и IMEI вашего устройства:\n%s", stInfo));
     }
 
     // Запрос на включение Bluetooth
@@ -305,7 +299,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                         runOnUiThread(() -> {
                             if (sbPrint.contains("temp right ")) {
                                 textTempRight.setText(sbPrint + "\u00B0");
-
                                 if (go_or_not) {
                                     Intent intent = new Intent(MainActivity.this, GroundFloor.class);
                                     intent.putExtra("temp_go", sbPrint + "\u00B0");
@@ -318,6 +311,14 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                             } else if (sbPrint.contains("FORCED_ON")) {
                                 tb1.setText("приточн. вкл");
                                 tb1.setChecked(true);
+                            } else if (sbPrint.contains("EXHAUST_ON")) {
+                                tb2.setText("вытяжн. вкл");
+                                tb2.setChecked(true);
+                            } else if (sbPrint.contains("AUTO_ON")) {
+                                tb3.setText("авто вкл");
+                                tb3.setChecked(true);
+                            } else if (sbPrint.contains("ERROR")) {
+                                Toast.makeText(MainActivity.this, "ERROR", Toast.LENGTH_LONG).show();
                             }
                         });
                     }
@@ -334,7 +335,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 e.printStackTrace();
             }
         }
-
     }
 
 
@@ -343,32 +343,46 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         switch (compoundButton.getId()) {
+
             case R.id.toggle_button_1:
                 if (isChecked) {
                     if (myThreadConnected != null) {
-                        byte[] bytesToSend = "FORCED_VENT_ON\r\n".getBytes();
+                        byte[] bytesToSend = "VENT_IN_BEE_ON\r\n".getBytes();
                         myThreadConnected.write(bytesToSend);
                     }
                 } else {
                     if (myThreadConnected != null) {
-                        byte[] bytesToSend = "FORCED_VENT_OFF\r\n".getBytes();
+                        byte[] bytesToSend = "VENT_IN_BEE_OFF\r\n".getBytes();
                         myThreadConnected.write(bytesToSend);
                     }
                 }
                 break;
+
             case R.id.toggle_button_2:
                 if (isChecked) {
                     if (myThreadConnected != null) {
-                        byte[] bytesToSend = "EXHAUST_VENT_ON\r\n".getBytes();
+                        byte[] bytesToSend = "VENT_OUT_BEE_ON\r\n".getBytes();
                         myThreadConnected.write(bytesToSend);
                     }
-                    Toast.makeText(MainActivity.this, "ВЫТЯЖКА ВКЛ", Toast.LENGTH_SHORT).show();
                 } else {
                     if (myThreadConnected != null) {
-                        byte[] bytesToSend = "EXHAUST_VENT_OFF\r\n".getBytes();
+                        byte[] bytesToSend = "VENT_OUT_BEE_OFF\r\n".getBytes();
                         myThreadConnected.write(bytesToSend);
                     }
-                    Toast.makeText(MainActivity.this, "ВЫТЯЖКА ОТКЛ", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case R.id.toggle_button_3:
+                if (isChecked) {
+                    if (myThreadConnected != null) {
+                        byte[] bytesToSend = "AUTO_ON\r\n".getBytes();
+                        myThreadConnected.write(bytesToSend);
+                    }
+                } else {
+                    if (myThreadConnected != null) {
+                        byte[] bytesToSend = "AUTO_OFF\r\n".getBytes();
+                        myThreadConnected.write(bytesToSend);
+                    }
                 }
                 break;
         }

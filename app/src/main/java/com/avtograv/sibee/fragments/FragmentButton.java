@@ -1,7 +1,6 @@
 package com.avtograv.sibee.fragments;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +11,6 @@ import androidx.annotation.Nullable;
 
 import com.avtograv.sibee.MessageFragmentListener;
 import com.avtograv.sibee.R;
-
-import org.jetbrains.annotations.NotNull;
 
 public class FragmentButton extends Fragment {
     @Nullable
@@ -41,14 +38,6 @@ public class FragmentButton extends Fragment {
 
 
     private MessageFragmentListener listener;
-
-    @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
-        if (context instanceof MessageFragmentListener) {                       // if (getActivity() instanceof MessageFragmentListener) {
-            listener = (MessageFragmentListener) context;                       // listener = (MessageFragmentListener) getActivity();
-        }
-    }
 
     @Override
     public void onDetach() {

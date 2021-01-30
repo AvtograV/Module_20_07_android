@@ -61,8 +61,6 @@
         android:layout_marginStart="28dp"
         android:layout_marginTop="30dp"
         android:minWidth="170dp"
-        android:textOff="@string/forced_ventilation_off"
-        android:textOn="@string/forced_ventilation_on"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/pair_id_list" />
 
@@ -87,8 +85,8 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="15dp"
         android:minWidth="170dp"
-        android:textOff="@string/off"
-        android:textOn="@string/on"
+        android:textOff="@string/auto_off"
+        android:textOn="@string/auto_on"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toggle_button_2" />
 

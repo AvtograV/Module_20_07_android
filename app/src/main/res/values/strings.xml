@@ -17,4 +17,6 @@
     <string name="forced_ventilation_on">приточн. вкл</string>
     <string name="exhaust_ventilation_off">вытяжн. откл</string>
     <string name="exhaust_ventilation_on">вытяжн. вкл</string>
+    <string name="auto_off">авто выкл</string>
+    <string name="auto_on">авто вкл</string>
 </resources>

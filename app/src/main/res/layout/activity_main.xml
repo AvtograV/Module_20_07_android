@@ -52,7 +52,7 @@
         android:visibility="gone"
         app:constraint_referenced_ids="button_1, button_2, button_3,
         toggle_button_1,toggle_button_2,toggle_button_3, toggle_button_4,
-        textTempRight, textTempLeft, textMQ_135"/>
+        textTempRight, textTempLeft, textMQ_135" />
 
     <ToggleButton
         android:id="@+id/toggle_button_1"
@@ -88,8 +88,8 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="30dp"
         android:minWidth="170dp"
-        android:textOff="@string/off"
-        android:textOn="@string/on"
+        android:textOff="@string/auto_off"
+        android:textOn="@string/auto_on"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toggle_button_2" />
 

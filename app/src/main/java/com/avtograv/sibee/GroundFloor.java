@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
-import com.avtograv.sibee.fragments.FragmentButton;
 import com.avtograv.sibee.fragments.FragmentGetTemp;
 
 public class GroundFloor extends FragmentActivity
